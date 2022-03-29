@@ -1,0 +1,90 @@
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+n = 500 #number of steps
+
+dt = 3600 * 24
+
+MS = 2e30
+
+MV = 4.87e24
+
+ME = 5.97e24
+
+G = 6.67e-11
+
+
+
+#intial position venus
+
+PX0_V = 108*1e9
+
+PY0_V = 0
+
+
+
+#initial velocity venus
+
+VX0_V = 0
+
+VY0_V = 35e3
+
+
+
+
+
+px = np.zeros(n)
+
+py = np.zeros(n)
+
+
+
+for i in range(n):
+
+    r = (PX0_V**2 + PY0_V**2)**0.5
+
+    theta = np.arctan2(PY0_V,PX0_V)
+
+    Fx = G*MV* MS/(r**2) * np.cos(theta)       # x component
+
+    Fy = G*MV* MS/(r**2)  * np.sin(theta)    # y component
+
+    #print(Fx, Fy,np.degrees(theta),-Fy/MV * dt)
+
+    Vx1 = VX0_V - Fx/MV * dt
+
+    Vy1 = VY0_V - Fy/MV * dt
+
+    print(Vx1, Vy1, np.sin(theta))
+
+    PX1_V = PX0_V + (Vx1 * dt)
+
+    PY1_V = PY0_V + (Vy1 * dt)
+
+    
+
+    PX0_V = PX1_V
+
+    PY0_V = PY1_V
+    
+    VX0_V = Vx1
+    VY0_V = Vy1
+
+    px[i] = PX0_V
+
+    py[i] = PY0_V
+
+    #print(f"{PX0_V:.2e}, {PY0_V: .2e}")
+
+    
+
+plt.plot(px, py)
+
+plt.xlim(-150e9, 150e9)
+
+plt.ylim(-150e9, 150e9)
+
+plt.grid()
+
+plt.show()   
