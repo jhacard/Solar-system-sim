@@ -3,83 +3,76 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 n = 500 #number of steps
-
 dt = 3600 * 24
-
 MS = 2e30
-
 MV = 4.87e24
-
 ME = 5.97e24
-
 G = 6.67e-11
 
 
 
 #intial position venus
-
 PX0_V = 108*1e9
-
 PY0_V = 0
 
 
-
 #initial velocity venus
-
 VX0_V = 0
-
 VY0_V = 35e3
 
+#initial posisition Earth
+PX0_E = 149.6* 1e9
+PY0_E = 0
 
+#initial velocity Earth
+VX0_E = 0
+VY0_E = 30e3
 
+pxV = np.zeros(n)
+pyV= np.zeros(n)
 
-
-px = np.zeros(n)
-
-py = np.zeros(n)
+pxE = np.zeros(n)
+pyE = np.zeros(n)
 
 
 
 for i in range(n):
-
-    r = (PX0_V**2 + PY0_V**2)**0.5
-
-    theta = np.arctan2(PY0_V,PX0_V)
-
-    Fx = G*MV* MS/(r**2) * np.cos(theta)       # x component
-
-    Fy = G*MV* MS/(r**2)  * np.sin(theta)    # y component
-
-    #print(Fx, Fy,np.degrees(theta),-Fy/MV * dt)
-
-    Vx1 = VX0_V - Fx/MV * dt
-
-    Vy1 = VY0_V - Fy/MV * dt
-
-    print(Vx1, Vy1, np.sin(theta))
-
-    PX1_V = PX0_V + (Vx1 * dt)
-
-    PY1_V = PY0_V + (Vy1 * dt)
-
-    
-
+    #venus
+    rv = (PX0_V**2 + PY0_V**2)**0.5
+    theta_V = np.arctan2(PY0_V,PX0_V)
+    FxV = G*MV* MS/(rv**2) * np.cos(theta_V)       # x component
+    FyV = G*MV* MS/(rv**2)  * np.sin(theta_V)    # y component
+    Vx1 = VX0_V - FxV/MV * dt
+    Vy1 = VY0_V - FyV/MV * dt
+    PX1_V = PX0_V + Vx1 * dt
+    PY1_V = PY0_V + Vy1 * dt  
     PX0_V = PX1_V
-
-    PY0_V = PY1_V
-    
+    PY0_V = PY1_V    
     VX0_V = Vx1
     VY0_V = Vy1
+    pxV[i] = PX0_V
+    pyV[i] = PY0_V
+    #earth
+    re = (PX0_E**2 + PY0_E**2)**0.5
+    theta_E = np.arctan2(PY0_E,PX0_E)
+    print(np.degrees(theta_E), PX0_E, PY0_E)
+    FxE = G*ME* MS/(re**2) * np.cos(theta_E)       # x component
+    FyE = G*ME* MS/(re**2)  * np.sin(theta_E)    # y component
+    VEx1 = VX0_E - FxE/ME * dt
+    VEy1 = VY0_E - FyE/ME * dt
+    PX1_E = PX0_E + VEx1 * dt
+    PY1_E = PY0_E + VEy1 * dt  
+    PX0_E = PX1_E
+    PY0_E = PY1_E    
+    VX0_E = VEx1
+    VY0_E = VEy1
+    pxE[i] = PX0_E
+    pyE[i] = PY0_E
 
-    px[i] = PX0_V
+   
 
-    py[i] = PY0_V
-
-    #print(f"{PX0_V:.2e}, {PY0_V: .2e}")
-
-    
-
-plt.plot(px, py)
+plt.plot(pxV, pyV)
+plt.plot(pxE, pyE)
 
 plt.xlim(-150e9, 150e9)
 
@@ -87,4 +80,4 @@ plt.ylim(-150e9, 150e9)
 
 plt.grid()
 
-plt.show()   
+plt.show()  
